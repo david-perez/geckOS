@@ -260,7 +260,7 @@ int main(void) {
 
         //CORE_SetNvicRamTableHandler(SysTick_IRQn, new_sys_tick_handler);
 
-        jump_to_address((void*) (0x5134 | 0x1));
+        jump_to_address((void*) (PROGRAM_ADDRESS_IN_FLASH | 0x1));
 
         // User application should never return, but we might as well loop
         // here in case it does.
