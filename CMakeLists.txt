@@ -62,6 +62,7 @@ set(SOURCES
         source/fat.c
         source/svc.c
         source/jump_to_address.s
+        source/kernel.c
 )
 
 ##### Outputs #####
