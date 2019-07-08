@@ -50,7 +50,7 @@ include(${BASE_LOCATION}/toolchain/efm32-base.cmake)
 ##### Files #####
 
 # Add project headers
-include_directories(./include)
+include_directories(./include ./include/libk)
 
 # Add project sources
 set(SOURCES
@@ -63,6 +63,8 @@ set(SOURCES
         source/svc.c
         source/jump_to_address.s
         source/kernel.c
+        source/timer.c
+        source/timeout.c
 )
 
 ##### Outputs #####

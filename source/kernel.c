@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "em_device.h"
 #include "em_cmu.h"
+#include "em_assert.h"
 #include "bsp.h"
 #include "em_core.h"
 #include "gpiointerrupt.h"
@@ -10,6 +11,7 @@
 extern uint32_t __Vectors;
 extern uint32_t __StackTop;
 void Default_Handler(void);
+void sys_tick_isr();
 
 typedef union {
     void (*pFunc)(void);
@@ -19,7 +21,7 @@ typedef union {
 // All 37 entries of a RAM-based interrupt vector table.
 // Instruct gcc to put it in the vtable section, which will be placed
 // by the linker at the start of RAM.
-tVectorEntry __attribute__((section ("vtable"))) ram_vector_table[] = { // Not const because we want it in RAM.
+tVectorEntry __attribute__((section ("vtable"))) ram_vector_table[] = {
     /* Cortex-M Exception Handlers */
     { .topOfStack = &__StackTop },              /* Initial Stack Pointer */
     { Reset_Handler             },              /* Reset Handler */
@@ -36,7 +38,7 @@ tVectorEntry __attribute__((section ("vtable"))) ram_vector_table[] = { // Not c
     { Default_Handler           },              /* Reserved */
     { Default_Handler           },              /* Reserved */
     { PendSV_Handler            },              /* PendSV Handler */
-    { SysTick_Handler           },              /* SysTick Handler */
+    { sys_tick_isr              },              /* SysTick Handler */
 
     /* External interrupts */
 
@@ -63,6 +65,12 @@ tVectorEntry __attribute__((section ("vtable"))) ram_vector_table[] = { // Not c
     { TIMER2_IRQHandler         },              /* 20 */
 };
 
+// This is the ISR for SysTick once the kernel is initialized.
+// For now, it's called every 1 ms.
+void sys_tick_isr() {
+    tick_announce(1); // Anounce that one tick has passed.
+}
+
 void prepare_kernel() {
     /* Setup SysTick Timer for 1 msec interrupts  */
     if (SysTick_Config(CMU_ClockFreqGet(cmuClock_CORE) / 1000)) {
@@ -83,10 +91,9 @@ void prepare_kernel() {
             (uint32_t*) &ram_vector_table,
             sizeof(ram_vector_table) / sizeof(ram_vector_table[0]),
             &Default_Handler,
-            true
+            false
             );
 
     NVIC_SetPriority(GPIO_ODD_IRQn, 1);
     NVIC_SetPriority(GPIO_EVEN_IRQn, 1);
-    //CORE_SetNvicRamTableHandler(SysTick_IRQn, new_sys_tick_handler);
 }
