@@ -56,6 +56,7 @@ add_custom_command(OUTPUT ${SPHINX_INDEX_FILE}
                    ${SPHINX_SOURCE}/conf.py
                    # Other docs files you want to track should go here (or in some variable)
                    ${CMAKE_CURRENT_SOURCE_DIR}/index.rst
+                   ${CMAKE_CURRENT_SOURCE_DIR}/timers.rst
                    ${DOXYGEN_INDEX_FILE}
                    COMMENT "Generating documentation with Sphinx")
 

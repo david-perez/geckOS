@@ -5,6 +5,8 @@ Welcome to geckOS's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   timers.rst
+
 Indices and tables
 ==================
 

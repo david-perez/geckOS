@@ -53,4 +53,8 @@ html_static_path = ['_static']
 
 # -- Breathe configuration ---------------------------------------------------
 
+breathe_projects = {
+        "geckOS": "./build/doxygen/xml/",
+}
+
 breathe_default_project = 'geckOS'
