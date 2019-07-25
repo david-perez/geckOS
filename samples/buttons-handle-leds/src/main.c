@@ -1,6 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
-#include "libk.h"
+#include "libk.c"
 
 static void callback_button_0() {
     svc_leds_toggle(0);

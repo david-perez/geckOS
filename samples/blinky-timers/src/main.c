@@ -1,6 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
-#include "libk.h"
+#include "libk.c"
 
 void my_expiry_function(struct timer *timer) {
     svc_leds_toggle(1);
