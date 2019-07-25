@@ -19,3 +19,7 @@ add_library(emusb ${EFM_USB_SOURCES})
 
 # Add library to build
 set(LIBS ${LIBS} emusb)
+
+target_compile_definitions(emusb
+    PRIVATE -DUSB_TIMER USB_TIMER1
+)

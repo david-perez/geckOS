@@ -43,6 +43,7 @@ endif()
 # or manually included here.
 include(./usb.cmake)
 include(./gpiointerrupt.cmake)
+include(./ustimer.cmake)
 
 # Add base libs (emlib, CMSIS, device files)
 include(${BASE_LOCATION}/toolchain/efm32-base.cmake)
@@ -57,7 +58,6 @@ set(SOURCES
 	source/main.c
         source/msddmedia.c
         source/msdd.c
-        source/bsp_stk_leds.c
         source/descriptors.c
         source/fat.c
         source/svc.c
@@ -65,6 +65,12 @@ set(SOURCES
         source/kernel.c
         source/timer.c
         source/timeout.c
+
+        # Device specific.
+        source/bsp_stk_leds.c
+        source/neopixels.c
+        source/pwmout_api.c
+        source/temperature.c
 )
 
 ##### Outputs #####

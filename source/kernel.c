@@ -3,11 +3,14 @@
 #include "em_device.h"
 #include "em_cmu.h"
 #include "em_assert.h"
-#include "bsp.h"
+#include "bsp.h" // Device specific?
 #include "em_core.h"
 #include "gpiointerrupt.h"
 #include <stdint.h>
 #include <stdbool.h>
+
+#include "pwmout_api.h"
+#include "neopixels.h" // Device specific.
 
 extern uint32_t __Vectors;
 extern uint32_t __StackTop;
@@ -80,9 +83,8 @@ void prepare_kernel() {
         }
     }
 
-    BSP_LedsInit();
-
     // Enable clock for GPIO module, initialize GPIOINT
+    CMU_ClockEnable(cmuClock_HFPER, true);
     CMU_ClockEnable(cmuClock_GPIO, true);
     GPIOINT_Init();
 
@@ -97,4 +99,11 @@ void prepare_kernel() {
 
     NVIC_SetPriority(GPIO_ODD_IRQn, 1);
     NVIC_SetPriority(GPIO_EVEN_IRQn, 1);
+
+    // Device-specific init stuff.
+    BSP_LedsInit();
+
+    // Initialize STACK stuff.
+    neopixels_init();
+    pwmout_init();
 }

@@ -12,9 +12,14 @@
 #include "descriptors.h"
 #include "fat.h"
 #include "kernel.h"
+#include "ustimer.h"
 
-#define PROGRAM_MAXIMUM_LENGTH          0xb000 // ~45KiB; 0x5000 + 0xb000 = 0x10000 = 64KiB.
-#define PROGRAM_ADDRESS_IN_FLASH        0x5000 // This should be kept to a value above the OS code.
+#include "neopixels.h"
+#include "pwmout_api.h"
+#include "temperature.h"
+
+#define PROGRAM_MAXIMUM_LENGTH          0x6000 // ~24KiB; 0xa000 + 0x6000 = 0x10000 = 64KiB.
+#define PROGRAM_ADDRESS_IN_FLASH        0xa000 // This should be kept to a value above the OS code.
 #define MAGIC_ADDRESS			0xfe00000
 #define MAGIC_VALUE			0xf00dbabe
 
@@ -28,7 +33,6 @@ STATIC_UBUF(buffer, SECTOR_SIZE);
 
 // Static buffer to write to flash.
 STATIC_UBUF(flashPage, FLASH_PAGE_SIZE);
-
 
 static const USBD_Callbacks_TypeDef callbacks =
 {
@@ -123,9 +127,6 @@ void SysTick_Handler(void) {
                     }
                 }
 
-                // TODO: We should write the file size somewhere in flash also.
-                //*(uint32_t*)(flashPage + FLASH_PAGE_SIZE - 4) = fileSize;
-
                 // Write magic value to magic address.
                 memset(flashPage, 0, FLASH_PAGE_SIZE);
                 *(uint32_t*) (flashPage) = MAGIC_VALUE;
@@ -203,7 +204,7 @@ int main(void) {
 
     // Initialize the Mass Storage Device driver.
     MSDD_Init(gpioPortF, 4);
-    
+
     init_fat_filesystem();
 
     /* Setup SysTick Timer for 1 msec interrupts  */
