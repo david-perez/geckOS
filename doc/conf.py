@@ -69,7 +69,37 @@ html_show_copyright = False
 # -- Breathe configuration ---------------------------------------------------
 
 breathe_projects = {
-        "geckOS": "./build/doxygen/xml/",
+        'geckOS': './build/doxygen/xml/',
 }
 
 breathe_default_project = 'geckOS'
+
+# ----------------------------------------------------------------------------
+
+import subprocess, os
+
+def configure_doxyfile(input_dir, output_dir):
+    with open('Doxyfile.in', 'r') as file :
+        filedata = file.read()
+
+    filedata = filedata.replace('@DOXYGEN_INPUT_DIR@', input_dir)
+    filedata = filedata.replace('@DOXYGEN_OUTPUT_DIR@', output_dir)
+
+    with open('Doxyfile', 'w') as file:
+        file.write(filedata)
+
+# Check if we're running on Read the Docs' servers.
+read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+
+if read_the_docs_build:
+    breathe_projects = {}
+
+    # Configure and run doxygen.
+    input_dir = '../include'
+    output_dir = 'build'
+    configure_doxyfile(input_dir, output_dir)
+    subprocess.call('doxygen', shell=True)
+    breathe_projects['geckOS'] = output_dir + '/xml'
+
+    # Copy rst files from other parts of the tree.
+    subprocess.call('python extract_content.py --ignore doc/build "../" "*.rst:samples:./"', shell=True)
