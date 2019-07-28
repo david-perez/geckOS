@@ -1,5 +1,7 @@
+.. _timers:
+
 Timers
-######
+======
 
 A :dfn:`timer` is a kernel object that measures the passage of time
 using the kernel's system clock. When a timer's specified time limit
@@ -43,7 +45,7 @@ If the timer's period is zero the timer enters the stopped state;
 otherwise the timer restarts with a new duration equal to its period.
 
 Defining a Timer
-================
+################
 
 A timer is defined using a variable of type :c:type:`struct timer`.
 It must then be initialized by calling :cpp:func:`timer_init()`.
@@ -58,7 +60,7 @@ The following code defines and initializes a timer.
     timer_init(&my_timer, my_expiry_function, NULL);
 
 Suggested Uses
-==============
+##############
 
 Use a timer to determine whether or not a specified amount of time
 has elapsed.
@@ -67,6 +69,6 @@ Use a timer to perform other work while carrying out operations
 involving time limits.
 
 API Reference
-=============
+#############
 
 .. doxygengroup:: timer_apis

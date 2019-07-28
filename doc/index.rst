@@ -5,11 +5,16 @@ Welcome to geckOS's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   timers.rst
+   introduction.rst
+   getting-started.rst
+   building-geckos.rst
+   kernel-services.rst
+   writing-applications-for-geckos.rst
+   samples/index.rst
+   supported-devices.rst
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
