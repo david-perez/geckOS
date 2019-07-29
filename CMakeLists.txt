@@ -63,6 +63,7 @@ set(SOURCES
         source/svc.c
         source/jump_to_address.s
         source/kernel.c
+        source/bootloader.c
         source/timer.c
         source/timeout.c
 
