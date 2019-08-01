@@ -39,7 +39,7 @@ endif()
 
 # Set board
 if(NOT BOARD)
-set(BOARD "efm32hg_slstk3400a")
+    set(BOARD "STACK")
 endif()
 
 ##### Modules #####
@@ -61,15 +61,23 @@ include_directories(include include/libk)
 # Add device-specific headers
 include_directories(targets/${BOARD}/include)
 
+# Add device-specific sources.
+# We need to add different sources depending on the target.
 set(DEVICE_SPECIFIC_SOURCES
     # Everything except svc_device.c should be put here.
     targets/${BOARD}/source/svc_dispatcher_device.c
     targets/${BOARD}/source/svc_handlers_device.c
+    targets/${BOARD}/source/device_init.c)
 
-    targets/${BOARD}/source/bsp_stk_leds.c
-    source/neopixels.c
-    source/pwmout_api.c
-    source/temperature.c)
+if(${BOARD} STREQUAL "efm32hg_slstk3400a")
+    set(DEVICE_SPECIFIC_SOURCES ${DEVICE_SPECIFIC_SOURCES}
+        targets/${BOARD}/source/bsp_stk_leds.c)
+elseif(${BOARD} STREQUAL "STACK")
+    set(DEVICE_SPECIFIC_SOURCES ${DEVICE_SPECIFIC_SOURCES}
+        targets/${BOARD}/source/neopixels.c
+        targets/${BOARD}/source/pwmout_api.c
+        targets/${BOARD}/source/temperature.c)
+endif()
 
 # Add project sources
 set(SOURCES

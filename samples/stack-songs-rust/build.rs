@@ -30,6 +30,10 @@ fn main() {
         // The input header we would like to generate
         // bindings for.
         .header("../../include/libk/libk.c")
+        // libk.c #includes svc_device.h, which is a device-specific file
+        // that's not sitting alongside libk.c in the tree. We therefore
+        // need to tell clang where to find it.
+        .clang_arg("-I../../targets/STACK/include")
         // Finish the builder and generate the bindings.
         .generate()
         // Unwrap the Result and panic on failure.
@@ -45,5 +49,10 @@ fn main() {
     cc::Build::new()
         // For some reason, it will only compile correctly if the file ends with .c
         .file("../../include/libk/libk.c")
-        .compile("libk.a")
+        // We also neeed to compile the definitions of the SVCs for the STACk device.
+        .file("../../targets/STACK/source/svc_device.c")
+        // These two includes are necessary.
+        .include("../../targets/STACK/include")
+        .include("../../include/libk")
+        .compile("libk.a");
 }

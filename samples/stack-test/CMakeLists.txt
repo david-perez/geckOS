@@ -36,12 +36,12 @@ include(../efm32-base.cmake)
 ##### Files #####
 
 # Add project headers
-include_directories(./include ${LIBK_LOCATION} ../../targets/efm32hg_slstk3400a/include)
+include_directories(./include ${LIBK_LOCATION} ../../targets/STACK/include)
 
 # Add project sources
 set(SOURCES
     src/main.c
-    ../../targets/efm32hg_slstk3400a/source/svc_device.c)
+    ../../targets/STACK/source/svc_device.c)
 
 ##### Outputs #####
 
