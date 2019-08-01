@@ -86,7 +86,7 @@ void prepare_kernel() {
     // Enable clock for GPIO module, initialize GPIOINT
     CMU_ClockEnable(cmuClock_HFPER, true);
     CMU_ClockEnable(cmuClock_GPIO, true);
-    GPIOINT_Init();
+    GPIOINT_Init(); // DEvice-specific?
 
     CORE_InitNvicVectorTable(
             &__Vectors,

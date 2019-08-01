@@ -11,7 +11,7 @@
 #include "descriptors.h"
 #include "fat.h"
 
-#include "bsp.h"
+/* #include "bsp.h" */
 
 static volatile uint32_t ms_ticks; // Counts 1ms time ticks.
 
@@ -46,11 +46,11 @@ static const USBD_Init_TypeDef usbInitStruct =
 // Called by USB device stack when USB has changed.
 static void stateChangeEvent(USBD_State_TypeDef oldState, USBD_State_TypeDef newState) {
     // Light LED 1 according to USB state.
-    if (newState == USBD_STATE_CONFIGURED) {
-        BSP_LedSet(1);
-    } else {
-        BSP_LedClear(1);
-    }
+    /* if (newState == USBD_STATE_CONFIGURED) { */
+    /*     BSP_LedSet(1); */
+    /* } else { */
+    /*     BSP_LedClear(1); */
+    /* } */
 
     // Call MSD drivers state change event handler.
     MSDD_StateChangeEvent(oldState, newState);
@@ -163,7 +163,7 @@ void bootloader_init() {
     CMU_ClockEnable(cmuClock_GPIO, true);
 
     // Initialize LED driver.
-    BSP_LedsInit();
+    /* BSP_LedsInit(); */
 
     // Initialize the Mass Storage Media.
     if (!MSDDMEDIA_Init()) {

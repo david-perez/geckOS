@@ -44,6 +44,8 @@ void test_sounder() {
 }
 
 int main() {
-    test_neopixels();
-    test_sounder();
+    /* test_neopixels(); */
+    /* test_sounder(); */
+    while (true) {
+    }
 }

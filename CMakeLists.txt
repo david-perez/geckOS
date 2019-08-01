@@ -37,6 +37,11 @@ if(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_BUILD_TYPE DEBUG)
 endif()
 
+# Set board
+if(NOT BOARD)
+set(BOARD "efm32hg_slstk3400a")
+endif()
+
 ##### Modules #####
 
 # Libraries can be added to the LIBS variable
@@ -51,28 +56,36 @@ include(${BASE_LOCATION}/toolchain/efm32-base.cmake)
 ##### Files #####
 
 # Add project headers
-include_directories(./include ./include/libk)
+include_directories(include include/libk)
+
+# Add device-specific headers
+include_directories(targets/${BOARD}/include)
+
+set(DEVICE_SPECIFIC_SOURCES
+    # Everything except svc_device.c should be put here.
+    targets/${BOARD}/source/svc_dispatcher_device.c
+    targets/${BOARD}/source/svc_handlers_device.c
+
+    targets/${BOARD}/source/bsp_stk_leds.c
+    source/neopixels.c
+    source/pwmout_api.c
+    source/temperature.c)
 
 # Add project sources
 set(SOURCES
-	source/main.c
-        source/msddmedia.c
-        source/msdd.c
-        source/descriptors.c
-        source/fat.c
-        source/svc.c
-        source/jump_to_address.s
-        source/kernel.c
-        source/bootloader.c
-        source/timer.c
-        source/timeout.c
-
-        # Device specific.
-        source/bsp_stk_leds.c
-        source/neopixels.c
-        source/pwmout_api.c
-        source/temperature.c
-)
+    source/main.c
+    source/msddmedia.c
+    source/msdd.c
+    source/descriptors.c
+    source/fat.c
+    source/svc_dispatcher.c
+    source/svc_handlers.c
+    source/jump_to_address.s
+    source/kernel.c
+    source/bootloader.c
+    source/timer.c
+    source/timeout.c
+    ${DEVICE_SPECIFIC_SOURCES})
 
 ##### Outputs #####
 
