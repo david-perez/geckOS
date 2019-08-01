@@ -66,7 +66,7 @@ Advantages of geckOS
   hooked into the hardware. Their code will continue to work independent of the
   underlying platform it's running on.
 - Application writers don't need to link their code against SDKs or use
-  complicated vednor IDEs. They can write their code from the comfortableness
+  complicated vendor IDEs. They can write their code from the comfortableness
   of their favourite text editor, without any dependencies, and in their
   favourite programming language, as long as it can be compiled down to the
   target's instruction set.

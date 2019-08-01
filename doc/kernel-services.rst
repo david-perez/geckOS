@@ -17,7 +17,7 @@ access hardware.
 
    timers.rst
 
-.. [#] Far from providing a large featureset such as that of conventional
+.. [#] Far from providing a large featureset such as those of conventional
        real-time operating systems, geckOS only intends to provide services which are
        used *very* commonly in applications and whose implementation is largely
        device-independent. Kernel services that are only useful in certain
