@@ -17,9 +17,11 @@ FILE(GLOB EFM_USB_SOURCES ${BASE_LOCATION}/drivers/usb/src/*.c)
 # Create emlib library
 add_library(emusb ${EFM_USB_SOURCES})
 
-# Add library to build
-set(LIBS ${LIBS} emusb)
-
 target_compile_definitions(emusb
     PRIVATE -DUSB_TIMER USB_TIMER1
 )
+
+target_link_libraries(emusb emlib)
+
+# Add library to build
+set(LIBS ${LIBS} emusb)

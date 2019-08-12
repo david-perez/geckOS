@@ -39,26 +39,39 @@ endif()
 
 # Set board
 if(NOT BOARD)
-    set(BOARD "STACK")
+    set(BOARD "efm32hg_slstk3400a")
+    # set(BOARD "STACK")
 endif()
 
 ##### Modules #####
 
 # Libraries can be added to the LIBS variable
 # or manually included here.
-include(./usb.cmake)
-include(./gpiointerrupt.cmake)
-include(./ustimer.cmake)
 
 # Add base libs (emlib, CMSIS, device files)
 include(${BASE_LOCATION}/toolchain/efm32-base.cmake)
 
+add_subdirectory(${BASE_LOCATION}/cmsis)
+add_subdirectory(${BASE_LOCATION}/emlib)
+add_subdirectory(${BASE_LOCATION}/device)
+add_subdirectory(${BASE_LOCATION}/protocol)
+add_subdirectory(${BASE_LOCATION}/hardware)
+
+add_subdirectory(${BASE_LOCATION}/emdrv/gpiointerrupt)
+add_subdirectory(${BASE_LOCATION}/emdrv/ustimer)
+
+include(./usb.cmake)
+
+# This is normally set in efm32-base.cmake, but libraries may modify it so set
+# it after libraries/subdirectories have been added.
+set(CMAKE_EXE_LINKER_FLAGS "${COMMON_DEFINITIONS} -Xlinker -T${LINKER_SCRIPT} -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.map -Wl,--gc-sections -Wl,-v")
+
 ##### Files #####
 
-# Add project headers
+# Add project headers.
 include_directories(include include/libk)
 
-# Add device-specific headers
+# Add device-specific headers.
 include_directories(targets/${BOARD}/include)
 
 # Add device-specific sources.
@@ -69,6 +82,7 @@ set(DEVICE_SPECIFIC_SOURCES
     targets/${BOARD}/source/svc_handlers_device.c
     targets/${BOARD}/source/device_init.c)
 
+# TODO Maybe move this switch to separate files inside each target in the targets/ folder.
 if(${BOARD} STREQUAL "efm32hg_slstk3400a")
     set(DEVICE_SPECIFIC_SOURCES ${DEVICE_SPECIFIC_SOURCES}
         targets/${BOARD}/source/bsp_stk_leds.c)
@@ -79,7 +93,7 @@ elseif(${BOARD} STREQUAL "STACK")
         targets/${BOARD}/source/temperature.c)
 endif()
 
-# Add project sources
+# Add geckOS device-independent sources.
 set(SOURCES
     source/main.c
     source/msddmedia.c
@@ -99,7 +113,19 @@ set(SOURCES
 
 # Generate executable and link
 add_executable(${TARGET} ${SOURCES})
-target_link_libraries(${TARGET} ${LIBS})
+
+efm32_configure_linker_addresses(${PROJECT_NAME})
+
+target_link_libraries(${PROJECT_NAME} ${LIBS} emlib cmsis device gpiointerrupt ustimer emusb)
+
+# Link optional libraries if available
+if (${HAS_HARDWARE})
+    target_link_libraries(${PROJECT_NAME} hardware)
+endif ()
+
+if (${HAS_PROTOCOL})
+    target_link_libraries(${PROJECT_NAME} protocol)
+endif ()
 
 ##### Post build #####
 
@@ -108,3 +134,8 @@ include(${BASE_LOCATION}/toolchain/post-build.cmake)
 
 # Add JLink commands
 include(${BASE_LOCATION}/toolchain/jlink.cmake)
+
+##### CMake debug prints #####
+if (CMAKE_VERBOSE_MAKEFILE)
+    print_debug_info()
+endif()

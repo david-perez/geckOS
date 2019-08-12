@@ -1,8 +1,10 @@
+#include <stdbool.h>
 #include "em_chip.h"
 #include "bootloader.h"
 #include "kernel.h"
 
 extern void jump_to_address(void * address);
+
 int main(void) {
     // Chip errata.
     CHIP_Init();

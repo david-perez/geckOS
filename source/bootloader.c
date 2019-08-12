@@ -11,8 +11,6 @@
 #include "descriptors.h"
 #include "fat.h"
 
-/* #include "bsp.h" */
-
 static volatile uint32_t ms_ticks; // Counts 1ms time ticks.
 
 static void stateChangeEvent(USBD_State_TypeDef oldState, USBD_State_TypeDef newState);
