@@ -62,8 +62,10 @@ void write_initial_fat_sector(uint8_t* buffer) {
 }
 
 void write_initial_root_directory(uint8_t* buffer) {
+    char volume_label[8] = "        ";
+    strncpy(volume_label, VOLUME_LABEL, 8);
     directoryEntry *entry = (directoryEntry*) buffer;
-    memcpy(entry->filename, "STACK   ", 8);
+    memcpy(entry->filename, volume_label, 8);
     memcpy(entry->extension, "   ", 3);
     entry->fileAttribute = 0x08; // Volume label.
 }

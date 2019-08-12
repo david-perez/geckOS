@@ -7,6 +7,10 @@
 #define SECTOR_SIZE          		512
 #define DATA_START_SECTOR               3
 
+#ifndef VOLUME_LABEL
+#define VOLUME_LABEL                    "GECKOS"
+#endif
+
 typedef struct __attribute__((__packed__)) bpb_sector_t {
     uint16_t bytes_per_sector;
     uint8_t sectors_per_cluster;

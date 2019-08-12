@@ -114,6 +114,8 @@ set(SOURCES
 # Generate executable and link
 add_executable(${TARGET} ${SOURCES})
 
+target_compile_definitions(${PROJECT_NAME} PUBLIC VOLUME_LABEL="${BOARD}")
+
 efm32_configure_linker_addresses(${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME} ${LIBS} emlib cmsis device gpiointerrupt ustimer emusb)
