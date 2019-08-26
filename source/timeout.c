@@ -71,32 +71,31 @@ void add_timeout(struct timeout *to, timeout_func_t fn, int32_t ticks)
 
 // The handler for SysTick will call this function every tick. Since 1 tick = 1 ms (for now),
 // and SysTick is configured for 1 ms interrupts, this means this function is called every 1 ms.
-void tick_announce(uint32_t ticks)
-{
-        __disable_irq();
+void tick_announce(uint32_t ticks) {
+    __disable_irq();
 
-	announce_remaining = ticks;
+    announce_remaining = ticks;
 
-	while (first() != NULL && first()->dticks <= announce_remaining) {
-		struct timeout *t = first();
-		int dt = t->dticks;
+    while (first() != NULL && first()->dticks <= announce_remaining) {
+        struct timeout *t = first();
+        int dt = t->dticks;
 
-		curr_tick += dt;
-		announce_remaining -= dt;
-		t->dticks = 0;
-		remove_timeout(t);
-
-                __enable_irq();
-		t->fn(t);
-                __disable_irq();
-	}
-
-	if (first() != NULL) {
-		first()->dticks -= announce_remaining;
-	}
-
-	curr_tick += announce_remaining;
-	announce_remaining = 0;
+        curr_tick += dt;
+        announce_remaining -= dt;
+        t->dticks = 0;
+        remove_timeout(t);
 
         __enable_irq();
+        t->fn(t);
+        __disable_irq();
+    }
+
+    if (first() != NULL) {
+        first()->dticks -= announce_remaining;
+    }
+
+    curr_tick += announce_remaining;
+    announce_remaining = 0;
+
+    __enable_irq();
 }

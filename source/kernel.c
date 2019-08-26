@@ -5,6 +5,7 @@
 #include "em_assert.h"
 #include "device_init.h"
 #include "em_core.h"
+#include "ustimer.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -94,6 +95,9 @@ void prepare_kernel() {
 
     NVIC_SetPriority(GPIO_ODD_IRQn, 1);
     NVIC_SetPriority(GPIO_EVEN_IRQn, 1);
+
+    // Sleep-related SVCs use this timer.
+    USTIMER_Init();
 
     // Device-specific init stuff.
     device_init();

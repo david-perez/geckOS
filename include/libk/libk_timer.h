@@ -6,7 +6,8 @@
 
 struct timer {
     struct timeout timeout;
-    void (*expiry_fn)(struct timer *timer); // Runs in ISR context.
+    // Runs in ISR context.
+    void (*expiry_fn)(struct timer *timer);
     int32_t period;
     uint32_t status;
 };
