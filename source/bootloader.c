@@ -21,6 +21,8 @@ STATIC_UBUF(buffer, SECTOR_SIZE);
 // Static buffer to write to flash.
 STATIC_UBUF(flashPage, FLASH_PAGE_SIZE);
 
+static uint16_t SECTORS_IN_FLASH_PAGE = FLASH_PAGE_SIZE / SECTOR_SIZE;
+
 static const USBD_Callbacks_TypeDef callbacks =
 {
   .usbReset        = NULL,
@@ -43,13 +45,6 @@ static const USBD_Init_TypeDef usbInitStruct =
 
 // Called by USB device stack when USB has changed.
 static void stateChangeEvent(USBD_State_TypeDef oldState, USBD_State_TypeDef newState) {
-    // Light LED 1 according to USB state.
-    /* if (newState == USBD_STATE_CONFIGURED) { */
-    /*     BSP_LedSet(1); */
-    /* } else { */
-    /*     BSP_LedClear(1); */
-    /* } */
-
     // Call MSD drivers state change event handler.
     MSDD_StateChangeEvent(oldState, newState);
 }
@@ -89,29 +84,23 @@ void SysTick_Handler(void) {
                 if (fileSize % SECTOR_SIZE != 0) how_many_clusters++;
 
                 uint16_t cluster_number = entry->firstLogicalCluster;
-                for (int j = 0; j < how_many_clusters; j += 2) {
-                    memset(flashPage, 0, FLASH_PAGE_SIZE);
-                    MSDDMEDIA_CheckAccess(&pCmd, physicalSector(cluster_number), 1);
-                    MSDDMEDIA_Read(&pCmd, flashPage, 1);
 
-                    // If this is not the last cluster, put the next one also into the flash page buffer.
-                    if (j != how_many_clusters - 1) {
+                for (int j = 0; j < how_many_clusters; j += SECTORS_IN_FLASH_PAGE) {
+                    memset(flashPage, 0, FLASH_PAGE_SIZE);
+
+                    for (int k = 0; k < SECTORS_IN_FLASH_PAGE; k++) {
+                        MSDDMEDIA_CheckAccess(&pCmd, physicalSector(cluster_number), 1);
+                        MSDDMEDIA_Read(&pCmd, flashPage + k * SECTOR_SIZE, 1);
+
                         // Get sector 1 of the MSD, which contains the FAT.
                         MSDDMEDIA_CheckAccess(&pCmd, 1, 1);
                         MSDDMEDIA_Read(&pCmd, buffer, 1);
 
                         // Get the next cluster after cluster_number, and update cluster_number.
                         cluster_number = getFAT(cluster_number, buffer);
-                        MSDDMEDIA_CheckAccess(&pCmd, physicalSector(cluster_number), 1);
-                        MSDDMEDIA_Read(&pCmd, flashPage + SECTOR_SIZE, 1);
                     }
 
                     writeToFlash((uint32_t*) (PROGRAM_ADDRESS_IN_FLASH + j * SECTOR_SIZE), flashPage, FLASH_PAGE_SIZE);
-
-                    // Get the next cluster after cluster_number, if there is one, and update cluster_number.
-                    if (j + 2 < how_many_clusters) {
-                        cluster_number = getFAT(cluster_number, buffer);
-                    }
                 }
 
                 // Write magic value to magic address.
@@ -159,9 +148,6 @@ void bootloader_init() {
     CMU_ClockSelectSet(cmuClock_HF, cmuSelect_HFXO);
     CMU_OscillatorEnable(cmuOsc_LFXO, true, false);
     CMU_ClockEnable(cmuClock_GPIO, true);
-
-    // Initialize LED driver.
-    /* BSP_LedsInit(); */
 
     // Initialize the Mass Storage Media.
     if (!MSDDMEDIA_Init()) {
