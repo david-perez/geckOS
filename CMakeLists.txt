@@ -58,9 +58,9 @@ add_subdirectory(${BASE_LOCATION}/protocol)
 add_subdirectory(${BASE_LOCATION}/hardware)
 
 add_subdirectory(${BASE_LOCATION}/emdrv/gpiointerrupt)
-add_subdirectory(${BASE_LOCATION}/emdrv/ustimer)
 
-include(./usb.cmake)
+include(usb.cmake)
+include(ustimer.cmake)
 
 # This is normally set in efm32-base.cmake, but libraries may modify it so set
 # it after libraries/subdirectories have been added.

@@ -16,5 +16,7 @@ FILE(GLOB EFM_USTIMER_SOURCES ${BASE_LOCATION}/emdrv/ustimer/src/*.c)
 # Create emlib library
 add_library(ustimer ${EFM_USTIMER_SOURCES})
 
+target_link_libraries(ustimer emlib)
+
 # Add library to build
 set(LIBS ${LIBS} ustimer)
