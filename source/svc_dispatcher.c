@@ -15,10 +15,10 @@ void svc_dispatcher(uint32_t *svc_args) {
         svc_sleep_ms_handler(svc_args[0]);
     } else if (svc_number == SLEEP_US) {
         svc_sleep_us_handler(svc_args[0]);
+    } else {
+        // Let's see if this is an SVC defined by the device manufacturer.
+        svc_dispatcher_device(svc_args);
     }
-
-    // Let's see if this is an SVC defined by the device manufacturer.
-    svc_dispatcher_device(svc_args);
 }
 
 void __attribute__((naked)) SVC_Handler() {
