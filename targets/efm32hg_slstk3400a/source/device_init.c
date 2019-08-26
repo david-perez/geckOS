@@ -1,3 +1,4 @@
+#include "device_init.h"
 #include "bsp.h"
 #include "gpiointerrupt.h"
 

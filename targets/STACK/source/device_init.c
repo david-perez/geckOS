@@ -1,3 +1,4 @@
+#include "device_init.h"
 #include "pwmout_api.h"
 #include "neopixels.h"
 
