@@ -27,9 +27,10 @@ set(TARGET geckOS)
 # Configure project and languages
 project(${TARGET} C CXX ASM)
 
-# Set device
+# Set MCU
 if(NOT DEVICE)
-set(DEVICE EFM32HG322F64)
+    # set(DEVICE EFM32HG322F64)
+    set(DEVICE EFM32WG380F256)
 endif()
 
 # Set build
@@ -39,7 +40,8 @@ endif()
 
 # Set board
 if(NOT BOARD)
-    set(BOARD "efm32hg_slstk3400a")
+    # set(BOARD "efm32hg_slstk3400a")
+    set(BOARD "AudioMoth")
     # set(BOARD "STACK")
 endif()
 
@@ -91,6 +93,8 @@ elseif(${BOARD} STREQUAL "STACK")
         targets/${BOARD}/source/neopixels.c
         targets/${BOARD}/source/pwmout_api.c
         targets/${BOARD}/source/temperature.c)
+elseif(${BOARD} STREQUAL "AudioMoth")
+    # TODO
 endif()
 
 # Add geckOS device-independent sources.
@@ -118,6 +122,7 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC VOLUME_LABEL="${BOARD}")
 
 efm32_configure_linker_addresses(${PROJECT_NAME})
 
+# TODO We should maybe not link everything here. This depends on the device.
 target_link_libraries(${PROJECT_NAME} ${LIBS} emlib cmsis device gpiointerrupt ustimer emusb)
 
 # Link optional libraries if available
