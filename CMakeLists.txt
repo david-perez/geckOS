@@ -35,14 +35,14 @@ endif()
 
 # Set build
 if(NOT CMAKE_BUILD_TYPE)
-set(CMAKE_BUILD_TYPE DEBUG)
+    set(CMAKE_BUILD_TYPE DEBUG)
 endif()
 
 # Set board
 if(NOT BOARD)
-    # set(BOARD "efm32hg_slstk3400a")
+    set(BOARD "efm32hg_slstk3400a")
     # set(BOARD "AudioMoth")
-    set(BOARD "Stack")
+    # set(BOARD "Stack")
 endif()
 
 ##### Modules #####
@@ -84,18 +84,7 @@ set(DEVICE_SPECIFIC_SOURCES
     targets/${BOARD}/source/svc_handlers_device.c
     targets/${BOARD}/source/device_init.c)
 
-# TODO Maybe move this switch to separate files inside each target in the targets/ folder.
-if(${BOARD} STREQUAL "efm32hg_slstk3400a")
-    set(DEVICE_SPECIFIC_SOURCES ${DEVICE_SPECIFIC_SOURCES}
-        targets/${BOARD}/source/bsp_stk_leds.c)
-elseif(${BOARD} STREQUAL "Stack")
-    set(DEVICE_SPECIFIC_SOURCES ${DEVICE_SPECIFIC_SOURCES}
-        targets/${BOARD}/source/neopixels.c
-        targets/${BOARD}/source/pwmout_api.c
-        targets/${BOARD}/source/temperature.c)
-elseif(${BOARD} STREQUAL "AudioMoth")
-    # TODO
-endif()
+include(${CMAKE_CURRENT_LIST_DIR}/targets/${BOARD}/device-specific-sources.cmake)
 
 # Add geckOS device-independent sources.
 set(SOURCES
