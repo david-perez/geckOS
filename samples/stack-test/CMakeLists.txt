@@ -49,13 +49,13 @@ set(CMAKE_EXE_LINKER_FLAGS "${COMMON_DEFINITIONS} -Xlinker -T${LINKER_SCRIPT} -W
 
 # Add project headers
 include_directories(${LIBK_LOCATION}
-    ../../targets/STACK/include
+    ../../targets/Stack/include
     include)
 
 # Add project sources
 add_executable(${PROJECT_NAME}
     src/main.c
-    ../../targets/STACK/source/svc_device.c)
+    ../../targets/Stack/source/svc_device.c)
 
 efm32_configure_linker_addresses(${PROJECT_NAME})
 

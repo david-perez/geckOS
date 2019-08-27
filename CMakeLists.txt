@@ -29,8 +29,8 @@ project(${TARGET} C CXX ASM)
 
 # Set MCU
 if(NOT DEVICE)
-    # set(DEVICE EFM32HG322F64)
-    set(DEVICE EFM32WG380F256)
+    set(DEVICE EFM32HG322F64)
+    # set(DEVICE EFM32WG380F256)
 endif()
 
 # Set build
@@ -41,8 +41,8 @@ endif()
 # Set board
 if(NOT BOARD)
     # set(BOARD "efm32hg_slstk3400a")
-    set(BOARD "AudioMoth")
-    # set(BOARD "STACK")
+    # set(BOARD "AudioMoth")
+    set(BOARD "Stack")
 endif()
 
 ##### Modules #####
@@ -88,7 +88,7 @@ set(DEVICE_SPECIFIC_SOURCES
 if(${BOARD} STREQUAL "efm32hg_slstk3400a")
     set(DEVICE_SPECIFIC_SOURCES ${DEVICE_SPECIFIC_SOURCES}
         targets/${BOARD}/source/bsp_stk_leds.c)
-elseif(${BOARD} STREQUAL "STACK")
+elseif(${BOARD} STREQUAL "Stack")
     set(DEVICE_SPECIFIC_SOURCES ${DEVICE_SPECIFIC_SOURCES}
         targets/${BOARD}/source/neopixels.c
         targets/${BOARD}/source/pwmout_api.c

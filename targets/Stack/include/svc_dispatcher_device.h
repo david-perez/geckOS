@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 enum svc_no_device {
-    // STACK (device-specific)
+    // Stack (device-specific)
     SLEEP,
     TONE,
     BEEP,
