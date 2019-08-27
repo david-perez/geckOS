@@ -7,74 +7,66 @@ cmake_minimum_required(VERSION 2.8.4)
 set(LIBK_LOCATION ../../include/libk)
 
 # Set efm32-base project location
-set(EFM_32_BASE_LOCATION ../../efm32-base)
+set(EFM32_BASE_LOCATION ../../efm32-base)
 
 # Set the compiler (must be prior to project setup)
-include(${EFM_32_BASE_LOCATION}/toolchain/arm-gcc.cmake)
+include(${EFM32_BASE_LOCATION}/toolchain/arm-gcc.cmake)
 
 ##### Project Setup #####
 
-# Set our output target
-set(TARGET stack-test)
-
 # Configure project and languages
-project(${TARGET} C CXX ASM)
+project(stack-test C CXX ASM)
 
 # Set device
 if(NOT DEVICE)
-set(DEVICE EFM32HG322F64)
+    set(DEVICE EFM32HG322F64)
 endif()
 
 # Set build
 if(NOT CMAKE_BUILD_TYPE)
-set(CMAKE_BUILD_TYPE DEBUG)
+    set(CMAKE_BUILD_TYPE DEBUG)
 endif()
 
-##### Compile flags and device #####
-include(../efm32-base.cmake)
+##### Modules #####
+
+# Libraries can be added to the LIBS variable
+# or manually included here.
+
+# Add base libs (emlib, CMSIS, device files)
+include(${EFM32_BASE_LOCATION}/toolchain/efm32-base.cmake)
+
+add_subdirectory(${EFM32_BASE_LOCATION}/cmsis ../${EFM32_BASE_LOCATION}/cmsis)
+add_subdirectory(${EFM32_BASE_LOCATION}/device ../${EFM32_BASE_LOCATION}/device)
+
+include("${CMAKE_CURRENT_LIST_DIR}/../device-compile-definitions.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../patch-linker-script.cmake")
+
+# This is normally set in efm32-base.cmake, but libraries may modify it so set
+# it after libraries/subdirectories have been added
+set(CMAKE_EXE_LINKER_FLAGS "${COMMON_DEFINITIONS} -Xlinker -T${LINKER_SCRIPT} -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}.map -Wl,--gc-sections -Wl,-v")
 
 ##### Files #####
 
 # Add project headers
-include_directories(./include ${LIBK_LOCATION} ../../targets/STACK/include)
+include_directories(${LIBK_LOCATION}
+    ../../targets/STACK/include
+    include)
 
 # Add project sources
-set(SOURCES
+add_executable(${PROJECT_NAME}
     src/main.c
     ../../targets/STACK/source/svc_device.c)
 
-##### Outputs #####
+efm32_configure_linker_addresses(${PROJECT_NAME})
 
-# Generate executable and link
-add_executable(${TARGET} ${SOURCES})
-
-if(FLASH_ORIGIN)
-target_link_options(${TARGET}
-    PRIVATE "LINKER:--defsym=flash_origin=${FLASH_ORIGIN}"
-)
-endif()
-
-if(FLASH_LENGTH)
-target_link_options(${TARGET}
-    PRIVATE "LINKER:--defsym=flash_length=${FLASH_LENGTH}"
-)
-endif()
-
-if(RAM_ORIGIN)
-target_link_options(${TARGET}
-    PRIVATE "LINKER:--defsym=ram_origin=${RAM_ORIGIN}"
-)
-endif()
-
-if(RAM_LENGTH)
-target_link_options(${TARGET}
-    PRIVATE "LINKER:--defsym=ram_length=${RAM_LENGTH}"
-)
-endif()
-
-target_link_libraries(${TARGET} ${LIBS})
+target_link_libraries(${PROJECT_NAME} ${LIBS} cmsis device)
 
 ##### Post build #####
 
 # Add post build commands
-include(${EFM_32_BASE_LOCATION}/toolchain/post-build.cmake)
+include(${EFM32_BASE_LOCATION}/toolchain/post-build.cmake)
+
+##### CMake debug prints #####
+if (CMAKE_VERBOSE_MAKEFILE)
+    print_debug_info()
+endif()
