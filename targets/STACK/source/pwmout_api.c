@@ -2,11 +2,6 @@
 #include "em_cmu.h"
 #include "em_timer.h"
 
-/* #define PWM_TIMER               TIMER0 */
-/* #define PWM_CH1                 (1UL) */
-/* #define PWM_TIMER_CLOCK         cmuClock_TIMER0 */
-/* #define ROUTE_CHANNEL           TIMER_ROUTE_CC1PEN */
-/* #define ROUTE_LOCATION          TIMER_ROUTE_LOCATION_LOC0 */
 #define EFM32_HFXO_FREQ         (24000000UL)
 #define REFERENCE_FREQUENCY     EFM32_HFXO_FREQ
 
@@ -23,20 +18,7 @@
 
 static uint32_t pwm_prescaler_div;
 
-/*
-* Disables the route location given. Returns true if it was enabled, false if it wasn't.
-*/
-/* bool pwmout_disable_channel_route() { */
-/*     if(PWM_TIMER->ROUTE & ROUTE_LOCATION) { */
-/*         //This channel was in use, so disable */
-/*         PWM_TIMER->ROUTE &= ~ROUTE_LOCATION; */
-/*         return true; */
-/*     } */
-/*     return false; */
-/* } */
-
-void pwmout_init()
-{
+void pwmout_init() {
     // Enable clock for TIMER0 module.
     CMU_ClockEnable(cmuClock_TIMER0, true);
 
@@ -44,8 +26,7 @@ void pwmout_init()
     GPIO_PinModeSet(OUTPUT_PORT, OUTPUT_PIN, gpioModePushPull, 0);
 
     // Configure CC channel parameters.
-    TIMER_InitCC_TypeDef timerCCInit = 
-    {
+    TIMER_InitCC_TypeDef timerCCInit = {
         .eventCtrl  = timerEventEveryEdge,
         .edge       = timerEdgeBoth,
         .prsSel     = timerPRSSELCh0,
@@ -80,12 +61,6 @@ void pwmout_init()
     };
     TIMER_Init(TIMER0, &timerInit);
 
-    /* // Set Top Value. */
-    /* TIMER_TopSet(TIMER0, CMU_ClockFreqGet(cmuClock_HFPER) / PWM_FREQ); */
-
-    /* // Set compare value starting at 7. */
-    /* TIMER_CompareBufSet(TIMER0, PWM_CH, 7); */
-
     // Set default 20ms frequency and 0ms pulse width.
     pwmout_period(0.02);
 }
@@ -103,86 +78,54 @@ void pwmout_write_channel(uint32_t channel, float value) {
     TIMER_CompareBufSet(PWM_TIMER, channel, width_cycles);
 }
 
-void pwmout_write(float value)
-{
+void pwmout_write(float value) {
     pwmout_write_channel(PWM_CH, value);
 }
 
 float pwmout_calculate_duty(uint32_t width_cycles, uint32_t period_cycles) {
     if(width_cycles > period_cycles) {
         return 1.0f;
-    }
-    else if (width_cycles == 0) {
+    } else if (width_cycles == 0) {
         return 0.0f;
-    }
-    else {
+    } else {
         return (float) width_cycles / (float) period_cycles;
     }
 }
 
 // Set the PWM period, keeping the duty cycle the same.
-void pwmout_period(float seconds)
-{
+void pwmout_period(float seconds) {
     // Find the lowest prescaler divider possible.
-    // This gives us max resolution for a given period
+    // This gives us max resolution for a given period.
 
-    //The value of the top register if prescaler is set to 0
-    uint32_t cycles = (uint32_t)REFERENCE_FREQUENCY * seconds;
+    // The value of the top register if prescaler is set to 0.
+    uint32_t cycles = (uint32_t) REFERENCE_FREQUENCY * seconds;
     pwm_prescaler_div = 0;
 
-    //The top register is only 16 bits, so we keep dividing till we are below 0xFFFF
+    // The top register is only 16 bits, so we keep dividing till we are below 0xFFFF.
     while (cycles > 0xFFFF) {
         cycles /= 2;
         pwm_prescaler_div++;
 
-        //Max pwm_prescaler_div supported is 10
+        // Max pwm_prescaler_div supported is 10.
         if (pwm_prescaler_div > 10) {
             pwm_prescaler_div = 10;
-            cycles = 0xFFFF; //Set it to max possible value;
+            cycles = 0xFFFF; // Set it to max possible value.
             break;
         }
     }
 
-    //Check if anything changed
+    // Check if anything changed.
     if(((PWM_TIMER->CTRL & _TIMER_CTRL_PRESC_MASK) == (pwm_prescaler_div << _TIMER_CTRL_PRESC_SHIFT)) && (TIMER_TopGet(PWM_TIMER) == cycles)) return;
 
-    //Save previous period for recalculation of duty cycles
+    // Save previous period for recalculation of duty cycles.
     uint32_t previous_period_cycles = PWM_TIMER->TOPB;
 
-    //Set prescaler
+    // Set prescaler.
     PWM_TIMER->CTRL = (PWM_TIMER->CTRL & ~_TIMER_CTRL_PRESC_MASK) | (pwm_prescaler_div << _TIMER_CTRL_PRESC_SHIFT);
 
-    //Set Top Value, which controls the PWM period
+    // Set Top Value, which controls the PWM period.
     TIMER_TopBufSet(PWM_TIMER, cycles);
 
-    //For each active channel, re-calculate the compare value
+    // For each active channel, re-calculate the compare value.
     pwmout_write_channel(PWM_CH, pwmout_calculate_duty(PWM_TIMER->CC[PWM_CH].CCVB, previous_period_cycles));
 }
-
-/* void pwmout_period_ms(pwmout_t *obj, int ms) */
-/* { */
-/*     pwmout_period(obj, ms / 1000.0f); */
-/* } */
-
-/* void pwmout_period_us(pwmout_t *obj, int us) */
-/* { */
-/*     pwmout_period(obj, us / 1000000.0f); */
-/* } */
-
-/* void pwmout_pulsewidth(pwmout_t *obj, float seconds) */
-/* { */
-/*     uint16_t width_cycles = (uint16_t) (((float) (REFERENCE_FREQUENCY >> pwm_prescaler_div)) * seconds); */
-/*     TIMER_CompareBufSet(PWM_TIMER, obj->channel, width_cycles); */
-/* } */
-
-/* void pwmout_pulsewidth_ms(pwmout_t *obj, int ms) */
-/* { */
-/*     uint16_t width_cycles = (uint16_t) ((REFERENCE_FREQUENCY >> pwm_prescaler_div) * ms) / 1000; */
-/*     TIMER_CompareBufSet(PWM_TIMER, obj->channel, width_cycles); */
-/* } */
-
-/* void pwmout_pulsewidth_us(pwmout_t *obj, int us) */
-/* { */
-/*     uint16_t width_cycles = (uint16_t) ((REFERENCE_FREQUENCY >> pwm_prescaler_div) * us) / 1000000; */
-/*     TIMER_CompareBufSet(PWM_TIMER, obj->channel, width_cycles); */
-/* } */
