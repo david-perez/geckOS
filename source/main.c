@@ -13,7 +13,7 @@ int main(void) {
     if (value == MAGIC_VALUE) {
         prepare_kernel();
 
-        jump_to_address((void*) (PROGRAM_ADDRESS_IN_FLASH | 0x1));
+        jump_to_address((void*) (APPLICATION_ORIGIN | 0x1));
 
         // User application should never return, but we might as well loop
         // here in case it does.

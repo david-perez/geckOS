@@ -78,7 +78,7 @@ void SysTick_Handler(void) {
         directoryEntry *entry = (directoryEntry*) buffer;
         for (int i = 0; i < NUMBER_OF_ROOT_ENTRIES; i++) {
             uint32_t fileSize = entry->fileSize;
-            if (strncmp(entry->extension, "BIN", 3) == 0 && fileSize > 0 && fileSize <= PROGRAM_MAXIMUM_LENGTH) {
+            if (strncmp(entry->extension, "BIN", 3) == 0 && fileSize > 0 && fileSize <= APPLICATION_MAX_SIZE) {
                 // Calculate how many clusters the file spans.
                 int how_many_clusters = fileSize / SECTOR_SIZE;
                 if (fileSize % SECTOR_SIZE != 0) how_many_clusters++;
@@ -100,7 +100,7 @@ void SysTick_Handler(void) {
                         cluster_number = getFAT(cluster_number, buffer);
                     }
 
-                    writeToFlash((uint32_t*) (PROGRAM_ADDRESS_IN_FLASH + j * SECTOR_SIZE), flashPage, FLASH_PAGE_SIZE);
+                    writeToFlash((uint32_t*) (APPLICATION_ORIGIN + j * SECTOR_SIZE), flashPage, FLASH_PAGE_SIZE);
                 }
 
                 // Write magic value to magic address.

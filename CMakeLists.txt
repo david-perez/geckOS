@@ -35,6 +35,15 @@ if(NOT TARGET_DEVICE)
     set(TARGET_DEVICE "Stack")
 endif()
 
+if(NOT APPLICATION_ORIGIN)
+    # This value works fine for release builds.
+    set(APPLICATION_ORIGIN 0x8800)
+endif()
+
+if(NOT APPLICATION_MAX_SIZE)
+    set(APPLICATION_MAX_SIZE 0x7800)
+endif()
+
 ##### Modules #####
 
 # Libraries can be added to the LIBS variable
@@ -97,7 +106,10 @@ set(SOURCES
 # Generate executable and link
 add_executable(${TARGET} ${SOURCES})
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC VOLUME_LABEL="${TARGET_DEVICE}")
+target_compile_definitions(${PROJECT_NAME} PUBLIC
+    VOLUME_LABEL="${TARGET_DEVICE}"
+    APPLICATION_ORIGIN=${APPLICATION_ORIGIN}
+    APPLICATION_MAX_SIZE=${APPLICATION_MAX_SIZE})
 
 efm32_configure_linker_addresses(${PROJECT_NAME})
 

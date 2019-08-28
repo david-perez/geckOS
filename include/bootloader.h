@@ -4,9 +4,15 @@
 #define MAGIC_ADDRESS			0xfe00000
 #define MAGIC_VALUE			0xf00dbabe
 
-// TODO. PROGRAM_MAXIMUM_LENGTH depends on flash size.
-#define PROGRAM_MAXIMUM_LENGTH          0x6000 // ~24KiB; 0xa000 + 0x6000 = 0x10000 = 64KiB.
-#define PROGRAM_ADDRESS_IN_FLASH        0x8800 // This should be kept to a value above the OS code.
+
+// This should be kept to a value above the OS code.
+#ifndef APPLICATION_ORIGIN
+    #define APPLICATION_ORIGIN 0x8800
+#endif
+
+#ifndef APPLICATION_MAX_SIZE
+    #define APPLICATION_MAX_SIZE 0x7800
+#endif
 
 void bootloader_init();
 
