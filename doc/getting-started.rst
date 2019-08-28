@@ -162,7 +162,7 @@ Let's have a look at a sample application for our starter kit. Head on to the
         cd ../samples/blinky-timers
         cat source/main.c
 
-The source code is very short. Here it is:
+The source code is short. Here is all of it:
 
     .. code-block:: c
 

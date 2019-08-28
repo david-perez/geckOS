@@ -7,7 +7,6 @@ Welcome to geckOS's documentation!
 
    introduction.rst
    getting-started.rst
-   building-geckos.rst
    kernel-services.rst
    writing-applications-for-geckos.rst
    samples/index.rst
