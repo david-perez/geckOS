@@ -1,5 +1,7 @@
+.. _introduction:
+
 Introduction
-############
+============
 
 geckOS is a minimal embedded operating system for programmable devices that
 facilitates the development of applications by abstracting away interaction
@@ -7,7 +9,7 @@ with the device's hardware. It currently supports USB-enabled Silicon Labs
 energy-friendly 32-bit microcontrollers.
 
 Why geckOS?
-===========
+###########
 
 Typically, embedded systems are a co-development of hardware and software.
 Applications are written in a low-level setting, directly accessing device
@@ -59,7 +61,7 @@ application is compiled separately and the binary is loaded into the
 microcontroller using geckOS's USB mass storage device bootloader.
 
 Advantages of geckOS
-====================
+####################
 
 - Application writers don't need to worry about the programmable device's
   architecture (e.g. interrupt vector tables) nor how the peripherals are
@@ -83,6 +85,6 @@ Advantages of geckOS
 .. todo:: Any more?
 
 Disadvantages of geckOS
-=======================
+#######################
 
 .. todo:: Many.

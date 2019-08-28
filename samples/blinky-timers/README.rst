@@ -1,3 +1,5 @@
+.. _blinky-timers:
+
 ``blinky-timers``
 =================
 
