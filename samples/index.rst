@@ -9,9 +9,7 @@ run on a variety of programmable devices exposing a certain set of supervisor
 calls (see :ref:`supported_devices`).
 
 Most applications are written in C, and each contains a short description and
-instructions on how to build them for the target device. See also
-:ref:`writing_applications_for_geckos` for information about how to write your
-own programs.
+instructions on how to build them for the target device.
 
 ..
    Order these alphabetically.

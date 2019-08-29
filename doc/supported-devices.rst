@@ -24,7 +24,7 @@ List of supported devices
 geckOS's main benefit is to abstract away device interaction in *programmable
 devices* housing one of the above microcontroller units. Device manufacturers
 can use geckOS to expose a friendly, clean, and safe API to application
-writers, baked into geckOS's kernel. As of writing, we have specified an
+writers, baked into geckOS's kernel. As of writing, we have specified and
 implemented APIs for a couple of devices: a starter kit, a programmable board
 for use in computer education, and an existing commercial acoustic logger.
 
