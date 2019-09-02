@@ -4,7 +4,7 @@ Introduction
 ============
 
 geckOS is a minimal embedded operating system for programmable devices that
-facilitates the development of applications by abstracting away interaction
+facilitates the development of applications by abstracting away the interaction
 with the device's hardware. It currently supports USB-enabled Silicon Labs
 energy-friendly 32-bit microcontrollers.
 
@@ -27,14 +27,32 @@ implementations with the hardware libraries and the manufacturer's firmware.
 This process is cumbersome, error-prone, and very difficult to be carried out
 by programmers with little programming experience.
 
-geckOS enables the user to write their application independently from the
-device manufacturer. Both actors develop their code independently (in possibly
-different programming languages), and the application writer makes use of the
-device's functionality by interacting with an API exposed by the manufacturer.
-The operating system makes this API accessible, acting as a communication
-system that glues the firmware and the relocatable application together. A
-couple of example situations in which this abstraction between application code
-and hardware are beneficial are:
+This project introduces geckOS, a minimal embedded operating system for
+programmable devices that facilitates the development of applications by
+abstracting away the interaction with the device’s hardware. It allows the
+device manufacturer to bake into the kernel any kind of functionality,
+exposed to the application writer via a clean, domain-specific API.
+Application writers are able to work on their code independently, in a
+possibly different programming language, to produce a smaller executable
+image that only includes the "pluggable" application logic.
+
+The *separation* between the OS and the application is largely
+accomplished by a *bootloader*. This is a piece of code in charge of
+loading in the application firmware. It exposes a region of the device's
+memory to the user's computer via USB in a user-friendly manner. The device
+shows up in the user's file explorer as a removable drive configured as a
+regular filesystem, to which they simply have to drag and drop their
+binary.
+
+The *union* is the easy-to-use programming layer defined by the
+manufacturer. The operating system makes this interface accessible by
+providing a set of well-defined "system calls". These system calls
+provide a standard, safe and extendable communication mechanism that glues
+the lower-level manufacturer's firmware and the relocatable application
+together.
+
+A couple of example situations in which this separation between application and
+OS firmware are:
 
 - A user buys a temperature sensor device for which he wants to act upon with a
   small piece of code, depending on the temperature reading. This piece of code
@@ -50,12 +68,12 @@ and hardware are beneficial are:
   how to interact with the microphone, where to plug his code into the firmware
   and how to compile and flash the whole thing.
 
-With geckOS, the device manufacturer writes the lower-level bits and compiles
+With geckOS, the device manufacturer writes the low-level bits and compiles
 them with the operating system's kernel to provide a clean,
-hardware-independent API that is exposed to the application writer in the form
-of a header file. The firmware is flashed to the microcontroller using a
+domain-specific API that is exposed to the application writer via system calls.
+The firmware is flashed to the microcontroller using a
 hardware programmer. On the other end, the user writes their application,
-calling the functions in the header file whenever he needs to interact with the
+calling some functions defined in a header file whenever they need to interact with the
 programmable device, without having to provide an implementation for them. The
 application is compiled separately and the binary is loaded into the
 microcontroller using geckOS's USB mass storage device bootloader.
@@ -81,10 +99,3 @@ Advantages of geckOS
   design for the user to flash applications, since these are loaded using
   geckOS's included USB mass storage device bootloader. Users just plug it into
   their computers and drag and drop their application binaries.
-
-.. todo:: Any more?
-
-Disadvantages of geckOS
-#######################
-
-.. todo:: Many.
